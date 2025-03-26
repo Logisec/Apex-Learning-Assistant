@@ -1,0 +1,200 @@
+.apex-helper-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 240px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.apex-helper-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.apex-helper-title {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+.apex-helper-close-button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #666;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.apex-helper-close-button:hover {
+    color: #333;
+}
+
+.apex-helper-status-container {
+    padding: 8px;
+    border-radius: 6px;
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+}
+
+.apex-helper-status {
+    font-size: 13px;
+    text-align: center;
+    color: #555;
+    font-weight: 500;
+}
+
+.apex-helper-question-counter {
+    font-size: 12px;
+    color: #777;
+    text-align: center;
+    margin-top: -5px;
+    margin-bottom: 5px;
+}
+
+.apex-helper-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.apex-helper-button-row {
+    display: flex;
+    gap: 8px;
+}
+
+.apex-helper-button {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+
+.apex-helper-button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.apex-helper-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.apex-helper-button i {
+    margin-right: 5px;
+}
+
+.apex-helper-find-button {
+    background-color: #4285f4;
+}
+
+.apex-helper-find-submit-button {
+    background-color: #0f9d58;
+}
+
+.apex-helper-submit-button {
+    background-color: #db4437;
+}
+
+.apex-helper-next-button {
+    background-color: #f4b400;
+}
+
+.apex-helper-solve-all-button {
+    background-color: #9c27b0;
+}
+
+.apex-helper-stop-button {
+    background-color: #ff5722;
+}
+
+.apex-helper-keyboard-shortcuts {
+    font-size: 12px;
+    color: #666;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+}
+
+.apex-helper-keyboard-shortcuts summary {
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+}
+
+.apex-helper-shortcuts-list {
+    margin: 5px 0 0;
+    padding-left: 15px;
+    list-style: none;
+}
+
+.apex-helper-shortcuts-list li {
+    margin-bottom: 3px;
+}
+
+.apex-helper-shortcut {
+    display: inline-block;
+    background-color: #f1f3f4;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    font-family: monospace;
+    margin-right: 5px;
+}
+
+.apex-helper-footer {
+    font-size: 10px;
+    color: #aaa;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.apex-helper-show-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.apex-helper-show-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Apex Helper</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+	<link rel="stylesheet" href="css/popup.css" />
+</head>
+
+<body>
+	<div class="container">
+		<div class="header">
+			<h1><i class="bi bi-brain"></i> Apex Helper</h1>
+		</div>
+
+		<div class="status-container">
+			<div id="status" class="status">Ready</div>
+		</div>
+
+		<div class="button-group">
+			<button id="findAnswer" class="action-button find-button">
+				<i class="bi bi-search"></i> Find Answer
+			</button>
+
+			<button id="findSubmit" class="action-button find-submit-button">
+				<i class="bi bi-check-circle"></i> Find & Submit
+			</button>
+
+			<button id="submitAnswer" class="action-button submit-button">
+				<i class="bi bi-upload"></i> Submit Answer
+			</button>
+
+			<button id="solveAll" class="action-button solve-all-button">
+				<i class="bi bi-lightning"></i> Solve All Questions
+			</button>
+		</div>
+
+		<div class="settings-container">
+			<details>
+				<summary>Settings</summary>
+				<div class="settings-content">
+					<div class="setting-row">
+						<label for="autoSubmitDelay">Auto-solve delay (ms):</label>
+						<input type="number" id="autoSubmitDelay" min="1000" max="15000" step="500" value="6000" />
+					</div>
+
+					<div class="setting-row checkbox-row">
+						<label for="autoAdvance">
+							<input type="checkbox" id="autoAdvance" checked />
+							Auto-advance to next question
+						</label>
+					</div>
+
+					<div class="setting-button-row">
+						<button id="saveSettings" class="settings-button">
+							<i class="bi bi-save"></i> Save Settings
+						</button>
+					</div>
+				</div>
+			</details>
+		</div>
+
+		<div class="keyboard-shortcuts">
+			<details>
+				<summary>Keyboard Shortcuts</summary>
+				<ul class="shortcuts-list">
+					<li>
+						<span class="shortcut-key">Alt+A</span> Find Answer
+					</li>
+					<li>
+						<span class="shortcut-key">Alt+S</span> Submit
+						Answer
+					</li>
+					<li>
+						<span class="shortcut-key">Alt+N</span> Next
+						Question
+					</li>
+					<li>
+						<span class="shortcut-key">Alt+Q</span> Auto-Solve
+						All
+					</li>
+				</ul>
+			</details>
+		</div>
+
+		<div class="footer">
+			<a href="https://github.com/yourusername/apex-helper" target="_blank" class="github-link">
+				<i class="bi bi-github"></i> GitHub
+			</a>
+			<span class="version">v1.0.1</span>
+		</div>
+	</div>
+
+	<script src="js/popup.js"></script>
+</body>
+
+</html>

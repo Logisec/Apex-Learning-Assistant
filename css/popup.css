@@ -1,0 +1,273 @@
+body {
+    width: 300px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+}
+
+.header {
+    text-align: center;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 10px;
+}
+
+h1 {
+    font-size: 20px;
+    margin: 0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+h1 i {
+    color: #4285f4;
+}
+
+.status-container {
+    margin-top: 5px;
+}
+
+.status {
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: #555;
+    background-color: #f1f3f4;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    font-weight: 500;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.action-button {
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.action-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.find-button {
+    background-color: #4285f4;
+}
+
+.find-button:hover {
+    background-color: #3367d6;
+}
+
+.find-submit-button {
+    background-color: #0f9d58;
+}
+
+.find-submit-button:hover {
+    background-color: #0b8043;
+}
+
+.submit-button {
+    background-color: #db4437;
+}
+
+.submit-button:hover {
+    background-color: #c53929;
+}
+
+.solve-all-button {
+    background-color: #9c27b0;
+    margin-top: 4px;
+}
+
+.solve-all-button:hover {
+    background-color: #7b1fa2;
+}
+
+.settings-container {
+    margin-top: 5px;
+    border-top: 1px solid #eaeaea;
+    padding-top: 10px;
+}
+
+.settings-container summary {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    user-select: none;
+    outline: none;
+}
+
+.settings-content {
+    padding: 10px;
+    margin-top: 8px;
+    background-color: #f1f3f4;
+    border-radius: 6px;
+}
+
+.setting-row {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.setting-row label {
+    flex: 1;
+    color: #555;
+}
+
+.setting-row input[type="number"] {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-row label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.setting-button-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.settings-button {
+    padding: 6px 12px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.settings-button:hover {
+    background-color: #3367d6;
+}
+
+.keyboard-shortcuts {
+    font-size: 13px;
+    color: #555;
+}
+
+.keyboard-shortcuts summary {
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+    outline: none;
+}
+
+.shortcuts-list {
+    margin: 8px 0 0;
+    padding-left: 15px;
+    list-style: none;
+}
+
+.shortcuts-list li {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.shortcut-key {
+    display: inline-block;
+    background-color: #f1f3f4;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    font-family: monospace;
+    margin-right: 8px;
+    font-size: 12px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+    padding-top: 10px;
+    border-top: 1px solid #eaeaea;
+    font-size: 12px;
+    color: #777;
+}
+
+.github-link {
+    color: #4285f4;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.github-link:hover {
+    text-decoration: underline;
+}
+
+.version {
+    color: #999;
+}
+
+.disabled-message {
+    padding: 10px;
+    background-color: #ffebee;
+    border: 1px solid #ffcdd2;
+    border-radius: 6px;
+    color: #c62828;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+}
