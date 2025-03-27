@@ -27,28 +27,28 @@ const ApexSolver = {
             }
 
             ApexUtils.updateStatus("Analyzing response...");
-            const correctAnswerInfo = ApexAssessment.findCorrectAnswer(assessmentData);
-            if (!correctAnswerInfo) {
+            const correctAnswers = ApexAssessment.findCorrectAnswer(assessmentData);
+            if (!correctAnswers) {
                 console.error("Failed to identify the correct answer");
                 ApexUtils.updateStatus("No correct answer found");
                 return null;
             }
 
-            console.log("Correct answer found:", correctAnswerInfo);
+            console.log("Correct answer(s) found:", correctAnswers);
 
-            ApexUtils.updateStatus("Selecting answer...");
-            const selected = await ApexAssessment.selectCorrectAnswer(correctAnswerInfo.correctAnswerId);
+            ApexUtils.updateStatus("Selecting answer(s)...");
+            const selected = await ApexAssessment.selectCorrectAnswer(correctAnswers);
 
             if (selected) {
-                console.log("✅ Answer selected successfully!");
-                ApexUtils.updateStatus("Answer selected!");
+                console.log("✅ Answer(s) selected successfully!");
+                ApexUtils.updateStatus("Answer(s) selected!");
                 ApexUtils.enableSubmitButton();
             } else {
-                console.log("❌ Failed to select the answer automatically. Try manual selection.");
+                console.log("❌ Failed to select the answer(s) automatically. Try manual selection.");
                 ApexUtils.updateStatus("Selection failed - try manually");
             }
 
-            return correctAnswerInfo;
+            return correctAnswers;
         } catch (error) {
             console.error("Error in solveApexQuestion:", error);
             ApexUtils.updateStatus("Error: " + error.message);
@@ -59,17 +59,17 @@ const ApexSolver = {
     solveSingleQuestion: async function (autoSubmit = false) {
         try {
             console.log("Solving single question...");
-            ApexUtils.updateStatus("Finding answer...");
+            ApexUtils.updateStatus("Finding answer(s)...");
 
             const result = await this.solveApexQuestion();
 
             if (!result) {
                 console.error("Failed to solve question");
-                ApexUtils.updateStatus("Failed to find answer");
+                ApexUtils.updateStatus("Failed to find answer(s)");
                 return false;
             }
 
-            ApexUtils.updateStatus("Answer found and selected!");
+            ApexUtils.updateStatus("Answer(s) found and selected!");
 
             if (autoSubmit) {
                 setTimeout(() => {

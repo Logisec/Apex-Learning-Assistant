@@ -104,26 +104,61 @@ const ApexAssessment = {
 
     findCorrectAnswer: function (data) {
         try {
-            console.log("Analyzing assessment data to find the correct answer...");
+            console.log("Analyzing assessment data to find the correct answer(s)...");
 
-            let correctAnswerId = null;
-            let correctAnswerText = null;
-            let correctAnswerIndex = -1;
-
-            if (data.Flow && data.Flow.FlowContents) {
-                for (let index = 0; index < data.Flow.FlowContents.length; index++) {
-                    const flowContent = data.Flow.FlowContents[index];
-                    if (flowContent.Answers) {
-                        for (const answer of flowContent.Answers) {
-                            if (answer.Responses && answer.Responses.length > 0) {
-                                for (const response of answer.Responses) {
-                                    if (response.FeedBacks && response.FeedBacks.length > 0) {
-                                        for (const feedback of response.FeedBacks) {
-                                            if (feedback.RefId === "correct_fb") {
-                                                correctAnswerId = answer.AssessmentAnswerId;
-                                                correctAnswerText = answer.AnswerText;
-                                                correctAnswerIndex = index;
+            const correctAnswers = [];
+            
+            if (data.QuestionTypeName === "FillInBlank") {
+                console.log("Processing Fill in the Blank question type");
+                
+                if (data.Flow && data.Flow.FlowContents && data.Flow.FlowContents.length > 0) {
+                    const contentContainer = data.Flow.FlowContents.find(item => item.FlowContents);
+                    
+                    if (contentContainer && contentContainer.FlowContents) {
+                        let dropdownIndex = 0;
+                        
+                        for (const flowItem of contentContainer.FlowContents) {
+                            if (flowItem.FlowContents) {
+                                for (const optionGroup of flowItem.FlowContents) {
+                                    if (optionGroup.Answers) {
+                                        for (const answer of optionGroup.Answers) {
+                                            if (answer.Responses && answer.Responses.length > 0) {
+                                                for (const response of answer.Responses) {
+                                                    if (response.FeedBacks && 
+                                                        response.FeedBacks.some(fb => fb.RefId === "correct_fb")) {
+                                                        console.log(`Found correct answer for dropdown ${dropdownIndex}:`, answer.AssessmentAnswerId);
+                                                        correctAnswers.push({
+                                                            dropdownIndex,
+                                                            correctAnswerId: answer.AssessmentAnswerId,
+                                                            correctAnswerText: answer.AnswerText
+                                                        });
+                                                        break;
+                                                    }
+                                                }
                                             }
+                                        }
+                                    }
+                                }
+                                
+                                dropdownIndex++;
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (data.Flow && data.Flow.FlowContents) {
+                    for (const flowContent of data.Flow.FlowContents) {
+                        if (flowContent.Answers) {
+                            for (const answer of flowContent.Answers) {
+                                if (answer.Responses && answer.Responses.length > 0) {
+                                    for (const response of answer.Responses) {
+                                        if (response.FeedBacks && 
+                                            response.FeedBacks.some(fb => fb.RefId === "correct_fb")) {
+                                            correctAnswers.push({
+                                                dropdownIndex: 0,
+                                                correctAnswerId: answer.AssessmentAnswerId,
+                                                correctAnswerText: answer.AnswerText
+                                            });
                                         }
                                     }
                                 }
@@ -131,36 +166,77 @@ const ApexAssessment = {
                         }
                     }
                 }
-            }
-
-            if (!correctAnswerId && data.Flow && data.Flow.FlowContents) {
-                for (let index = 0; index < data.Flow.FlowContents.length; index++) {
-                    const flowContent = data.Flow.FlowContents[index];
-                    if (flowContent.Answers) {
-                        for (const answer of flowContent.Answers) {
-                            if (answer.IsCorrect === true) {
-                                correctAnswerId = answer.AssessmentAnswerId;
-                                correctAnswerText = answer.AnswerText;
-                                correctAnswerIndex = index;
+                
+                if (correctAnswers.length === 0 && data.Flow && data.Flow.FlowContents) {
+                    for (const flowContent of data.Flow.FlowContents) {
+                        if (flowContent.Answers) {
+                            for (const answer of flowContent.Answers) {
+                                if (answer.IsCorrect === true) {
+                                    correctAnswers.push({
+                                        dropdownIndex: 0,
+                                        correctAnswerId: answer.AssessmentAnswerId,
+                                        correctAnswerText: answer.AnswerText
+                                    });
+                                }
                             }
                         }
                     }
                 }
             }
+            
+            if (correctAnswers.length === 0 && data.QuestionTypeName === "FillInBlank") {
+                console.log("Attempting direct analysis of nested structure...");
+                
+                const findResponsesWithCorrectFeedback = (obj, dropdownIndex = 0) => {
+                    if (!obj) return;
+                    
+                    if (obj.AssessmentAnswerId && obj.Responses && obj.Responses.length > 0) {
+                        for (const response of obj.Responses) {
+                            if (response.FeedBacks && 
+                                response.FeedBacks.some(fb => fb.RefId === "correct_fb")) {
+                                console.log(`Found correct answer at dropdown ${dropdownIndex}:`, obj.AssessmentAnswerId);
+                                correctAnswers.push({
+                                    dropdownIndex,
+                                    correctAnswerId: obj.AssessmentAnswerId,
+                                    correctAnswerText: obj.AnswerText
+                                });
+                            }
+                        }
+                        return;
+                    }
+                    
+                    if (Array.isArray(obj)) {
+                        let currDropdownIndex = dropdownIndex;
+                        for (let i = 0; i < obj.length; i++) {
+                            if (obj[i].FlowContents) {
+                                findResponsesWithCorrectFeedback(obj[i], currDropdownIndex);
 
-            if (correctAnswerId) {
-                console.log("Found correct answer!");
-                console.log("Answer ID:", correctAnswerId);
-                console.log("Answer Index:", correctAnswerIndex);
-
-                return {
-                    correctAnswerId,
-                    correctAnswerText,
-                    correctAnswerIndex
+                                if (obj[i].FlowContents.some(subItem => subItem.Answers)) {
+                                    currDropdownIndex++;
+                                }
+                            } else {
+                                findResponsesWithCorrectFeedback(obj[i], currDropdownIndex);
+                            }
+                        }
+                    } else if (obj && typeof obj === 'object') {
+                        for (const key in obj) {
+                            findResponsesWithCorrectFeedback(obj[key], dropdownIndex);
+                        }
+                    }
                 };
+                
+                findResponsesWithCorrectFeedback(data);
             }
 
-            console.log("Could not find the correct answer in the response.");
+            if (correctAnswers.length > 0) {
+                console.log(`Found ${correctAnswers.length} correct answer(s)!`);
+                correctAnswers.forEach((answer, index) => {
+                    console.log(`Answer ${index + 1}:`, answer);
+                });
+                return correctAnswers;
+            }
+
+            console.log("Could not find any correct answers in the response.");
             return null;
         } catch (error) {
             console.error("Error analyzing assessment data:", error);
@@ -168,71 +244,145 @@ const ApexAssessment = {
         }
     },
 
-    selectCorrectAnswer: async function (answerId) {
+    selectCorrectAnswer: async function (correctAnswers) {
         try {
-            console.log(`Attempting to select answer with ID: ${answerId}`);
-
-            let answerElement = document.querySelector(`[data-answerid="${answerId}"]`);
-            if (answerElement) {
-                const distractorElement = answerElement.closest('.distractor');
-                if (distractorElement) {
-                    const radioInput = distractorElement.querySelector('input[type="radio"]');
-                    if (radioInput) {
-                        console.log("Found radio input for the correct answer, clicking...");
-                        radioInput.click();
-                        return true;
-                    }
-                }
+            if (!correctAnswers) return false;
+            
+            const answers = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
+            
+            if (answers.length === 0) {
+                console.error("No answers to select");
+                return false;
             }
 
-            const radioInput = document.getElementById(`id_${answerId}`);
-            if (radioInput) {
-                console.log("Found radio input by ID, clicking...");
-                radioInput.click();
-                return true;
-            }
-
-            const spanElement = document.getElementById(answerId);
-            if (spanElement) {
-                const parentLabel = spanElement.closest('label');
-                if (parentLabel) {
-                    const radioInput = parentLabel.querySelector('input[type="radio"]');
-                    if (radioInput) {
-                        console.log("Found radio input through span element, clicking...");
-                        radioInput.click();
-                        return true;
+            console.log(`Attempting to select ${answers.length} answer(s)...`);
+            
+            const dropdowns = document.querySelectorAll('.dd-container');
+            const isDropdownQuestion = dropdowns.length > 0;
+            
+            if (isDropdownQuestion) {
+                console.log(`Found ${dropdowns.length} dropdowns, handling as dropdown question`);
+                
+                const dropdownMap = new Map();
+                
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const dropdown = dropdowns[i];
+                    const dropdownId = dropdown.id;
+                    
+                    let index = i;
+                    if (dropdownId) {
+                        const match = dropdownId.match(/dropdown(\d+)/);
+                        if (match && match[1]) {
+                            index = parseInt(match[1]) - 1;
+                        }
+                    }
+                    
+                    dropdownMap.set(index, dropdown);
+                }
+                
+                let successCount = 0;
+                
+                for (const answer of answers) {
+                    const answerId = answer.correctAnswerId;
+                    const dropdownIndex = answer.dropdownIndex;
+                    
+                    console.log(`Selecting answer for dropdown index ${dropdownIndex}: ${answerId}`);
+                    
+                    const dropdown = dropdownMap.get(dropdownIndex);
+                    
+                    if (dropdown) {
+                        console.log(`Processing dropdown ${dropdownIndex + 1} with answer ID: ${answerId}`);
+                        
+                        const ddSelect = dropdown.querySelector('.dd-select');
+                        if (ddSelect) {
+                            ddSelect.click();
+                            await ApexUtils.sleep(200);
+                            
+                            const option = dropdown.querySelector(`.dd-option[data-val="${answerId}"]`);
+                            if (option) {
+                                console.log(`Found matching option for dropdown ${dropdownIndex + 1}, clicking...`);
+                                option.click();
+                                await ApexUtils.sleep(200);
+                                successCount++;
+                            } else {
+                                console.error(`Could not find option with data-val="${answerId}" in dropdown ${dropdownIndex + 1}`);
+                                ddSelect.click();
+                            }
+                        }
+                    } else {
+                        console.error(`Could not find dropdown element for index ${dropdownIndex}`);
                     }
                 }
-            }
-
-            console.log("Trying to select by index (fallback method)...");
-            const allRadioInputs = document.querySelectorAll('.distractor input[type="radio"]');
-            if (allRadioInputs.length > 0) {
-                const letterMatch = answerId.match(/[A-D]$/i);
-                if (letterMatch) {
-                    const letter = letterMatch[0].toUpperCase();
-                    const index = letter.charCodeAt(0) - 'A'.charCodeAt(0);
-                    if (index >= 0 && index < allRadioInputs.length) {
-                        console.log(`Using letter-based index: ${index} (${letter})`);
-                        allRadioInputs[index].click();
-                        return true;
+                
+                return successCount > 0;
+            } else {
+                const firstAnswer = answers[0];
+                const answerId = firstAnswer.correctAnswerId || firstAnswer;
+                
+                console.log(`Handling as radio question with answer ID: ${answerId}`);
+                
+                let answerElement = document.querySelector(`[data-answerid="${answerId}"]`);
+                if (answerElement) {
+                    const distractorElement = answerElement.closest('.distractor');
+                    if (distractorElement) {
+                        const radioInput = distractorElement.querySelector('input[type="radio"]');
+                        if (radioInput) {
+                            console.log("Found radio input for the correct answer, clicking...");
+                            radioInput.click();
+                            return true;
+                        }
                     }
                 }
 
-                const numberMatch = answerId.match(/(\d+)$/);
-                if (numberMatch) {
-                    const index = parseInt(numberMatch[1]) % allRadioInputs.length;
-                    console.log(`Using number-based index: ${index}`);
-                    allRadioInputs[index].click();
+                const radioInput = document.getElementById(`id_${answerId}`);
+                if (radioInput) {
+                    console.log("Found radio input by ID, clicking...");
+                    radioInput.click();
                     return true;
                 }
 
-                console.log("Using first option as last resort");
-                allRadioInputs[0].click();
-                return true;
+                const spanElement = document.getElementById(answerId);
+                if (spanElement) {
+                    const parentLabel = spanElement.closest('label');
+                    if (parentLabel) {
+                        const radioInput = parentLabel.querySelector('input[type="radio"]');
+                        if (radioInput) {
+                            console.log("Found radio input through span element, clicking...");
+                            radioInput.click();
+                            return true;
+                        }
+                    }
+                }
+
+                console.log("Trying to select by index (fallback method)...");
+                const allRadioInputs = document.querySelectorAll('.distractor input[type="radio"]');
+                if (allRadioInputs.length > 0) {
+                    const letterMatch = answerId.match(/[A-D]$/i);
+                    if (letterMatch) {
+                        const letter = letterMatch[0].toUpperCase();
+                        const index = letter.charCodeAt(0) - 'A'.charCodeAt(0);
+                        if (index >= 0 && index < allRadioInputs.length) {
+                            console.log(`Using letter-based index: ${index} (${letter})`);
+                            allRadioInputs[index].click();
+                            return true;
+                        }
+                    }
+
+                    const numberMatch = answerId.match(/(\d+)$/);
+                    if (numberMatch) {
+                        const index = parseInt(numberMatch[1]) % allRadioInputs.length;
+                        console.log(`Using number-based index: ${index}`);
+                        allRadioInputs[index].click();
+                        return true;
+                    }
+
+                    console.log("Using first option as last resort");
+                    allRadioInputs[0].click();
+                    return true;
+                }
             }
 
-            console.error("Could not find any way to select the answer");
+            console.error("Could not find any way to select the answer(s)");
             return false;
         } catch (error) {
             console.error("Error selecting answer:", error);
